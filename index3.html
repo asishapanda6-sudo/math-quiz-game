@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Quiz Battle</title>
+
+  <style>
+    :root{
+      --bg:#f4f6f9;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --soft:#f9fafb;
+
+      --green:#16a34a;
+      --blue:#2563eb;
+      --red:#ef4444;
+      --black:#111827;
+    }
+
+    body.dark{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --border:#1f2937;
+      --soft:#111827;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 10px;
+      transition: 0.2s;
+    }
+
+    .box {
+      width: 600px;
+      max-width: 95vw;
+      background: var(--card);
+      padding: 28px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+      border: 1px solid var(--border);
+      transition: 0.2s;
+    }
+
+    h2 {
+      margin: 0;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 26px;
+    }
+
+    p {
+      margin: 0;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select, input {
+      width: 92%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      font-size: 16px;
+      margin-top: 10px;
+      background: var(--card);
+      color: var(--text);
+      border-color: var(--border);
+      transition: 0.2s;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+
+    button {
+      padding: 12px 18px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .btnGreen { background: var(--green); color: white; }
+    .btnBlue { background: var(--blue); color: white; margin-left: 10px; }
+    .btnGray { background: var(--black); color: white; }
+    .btnRed { background: var(--red); color: white; width: 92%; }
+
+    .hide { display: none; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      gap: 10px;
+    }
+
+    #welcomeText {
+      font-weight: 800;
+      color: var(--text);
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .topRight {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .modebar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    #question {
+      font-size: 30px;
+      margin-top: 18px;
+      font-weight: 900;
+      color: var(--text);
+      min-height: 42px;
+      letter-spacing: 0.5px;
+    }
+
+    #message {
+      margin-top: 14px;
+      font-size: 17px;
+      font-weight: 800;
+      min-height: 24px;
+    }
+
+    .progressWrap{
+      margin-top: 14px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 14px;
+      width: 92%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .progressBar{
+      height: 100%;
+      width: 0%;
+      background: var(--blue);
+      transition: 0.25s;
+    }
+
+    .progressText{
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .statsGrid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .statCard {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .statTitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+
+    .statValue {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .resultBox {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      text-align: left;
+    }
+
+    .resultBox h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .muted { color: var(--muted); font-weight: 800; }
+
+    .toggleBtn{
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN PAGE -->
+  <div class="box" id="loginBox">
+    <h2>Student Login</h2>
+    <p>Enter your details to start the Math Quiz</p>
+
+    <input type="text" id="studentName" placeholder="Enter your name" />
+
+    <select id="studentClass">
+      <option value="">Select your class</option>
+      <option value="5">Class 5</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+    </select>
+
+    <button class="btnGreen" id="loginBtn" style="width:92%;">Login</button>
+    <div id="loginMsg" style="margin-top:12px; font-weight:bold;"></div>
+  </div>
+
+  <!-- GAME PAGE -->
+  <div class="box hide" id="gameBox">
+
+    <div class="topbar">
+      <div id="welcomeText">Welcome</div>
+
+      <div class="topRight">
+        <button class="toggleBtn" id="darkToggle">🌙 Dark</button>
+        <button id="logoutBtn" class="btnGray">Logout</button>
+      </div>
+    </div>
+
+    <h2>Math Quiz Battle</h2>
+    <p>Practice Maths (Class 5–9) | Score + Accuracy + Challenge Mode</p>
+
+    <div class="modebar">
+      <button id="practiceModeBtn" class="btnBlue">Practice Mode</button>
+      <button id="challengeModeBtn" class="btnGreen">Challenge (10 Q)</button>
+    </div>
+
+    <div id="question">Click "Next Question"</div>
+
+    <input type="number" id="answerInput" placeholder="Enter your answer" />
+
+    <div>
+      <button class="btnGreen" id="submitBtn">Submit</button>
+      <button class="btnBlue" id="nextBtn">Next Question</button>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="progressWrap">
+      <div class="progressBar" id="progressBar"></div>
+    </div>
+    <div class="progressText" id="progressText">Challenge progress: 0/10</div>
+
+    <div class="statsGrid">
+      <div class="statCard"><div class="statTitle">Score</div><div class="statValue" id="score">0</div></div>
+      <div class="statCard"><div class="statTitle">Best Score (Saved)</div><div class="statValue" id="bestScore">0</div></div>
+      <div class="statCard"><div class="statTitle">Total Questions</div><div class="statValue" id="totalQ">0</div></div>
+      <div class="statCard"><div class="statTitle">Accuracy</div><div class="statValue" id="accuracy">0%</div></div>
+      <div class="statCard"><div class="statTitle">Correct</div><div class="statValue" id="correctCount">0</div></div>
+      <div class="statCard"><div class="statTitle">Wrong</div><div class="statValue" id="wrongCount">0</div></div>
+      <div class="statCard"><div class="statTitle">Time Left</div><div class="statValue" id="timer">12s</div></div>
+      <div class="statCard"><div class="statTitle">Mode</div><div class="statValue" id="modeText">Practice</div></div>
+    </div>
+
+    <div class="resultBox hide" id="resultBox">
+      <h3>🏁 Challenge Result</h3>
+      <div class="row"><span class="muted">Name</span><span id="resName"></span></div>
+      <div class="row"><span class="muted">Class</span><span id="resClass"></span></div>
+      <div class="row"><span class="muted">Score</span><span id="resScore"></span></div>
+      <div class="row"><span class="muted">Accuracy</span><span id="resAccuracy"></span></div>
+      <div class="row"><span class="muted">Correct</span><span id="resCorrect"></span></div>
+      <div class="row"><span class="muted">Wrong</span><span id="resWrong"></span></div>
+      <div class="row"><span class="muted">Total</span><span id="resTotal"></span></div>
+    </div>
+
+    <button class="btnRed" id="resetBtn">Reset Stats</button>
+  </div>
+
+  <script>
+    // ---------------- ELEMENTS ----------------
+    const loginBox = document.getElementById("loginBox");
+    const gameBox = document.getElementById("gameBox");
+
+    const studentName = document.getElementById("studentName");
+    const studentClass = document.getElementById("studentClass");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginMsg = document.getElementById("loginMsg");
+    const welcomeText = document.getElementById("welcomeText");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const darkToggle = document.getElementById("darkToggle");
+
+    const questionEl = document.getElementById("question");
+    const answerInput = document.getElementById("answerInput");
+    const messageEl = document.getElementById("message");
+
+    const scoreEl = document.getElementById("score");
+    const bestScoreEl = document.getElementById("bestScore");
+    const totalQEl = document.getElementById("totalQ");
+    const accuracyEl = document.getElementById("accuracy");
+    const correctCountEl = document.getElementById("correctCount");
+    const wrongCountEl = document.getElementById("wrongCount");
+    const timerEl = document.getElementById("timer");
+    const modeTextEl = document.getElementById("modeText");
+
+    const practiceModeBtn = document.getElementById("practiceModeBtn");
+    const challengeModeBtn = document.getElementById("challengeModeBtn");
+
+    const resultBox = document.getElementById("resultBox");
+    const resName = document.getElementById("resName");
+    const resClass = document.getElementById("resClass");
+    const resScore = document.getElementById("resScore");
+    const resAccuracy = document.getElementById("resAccuracy");
+    const resCorrect = document.getElementById("resCorrect");
+    const resWrong = document.getElementById("resWrong");
+    const resTotal = document.getElementById("resTotal");
+
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+
+    // ---------------- STATE ----------------
+    let loggedInName = "";
+    let loggedInClass = "";
+
+    let correctAnswer = null;
+
+    let score = 0;
+    let bestScore = 0;
+
+    let totalQ = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    let timeLeft = 12;
+    let timerInterval = null;
+
+    let currentMode = "practice";
+    let challengeLimit = 10;
+
+    // ---------------- SOUND (FIXED) ----------------
+    let audioCtx = null;
+
+    function beep(type) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.frequency.value = (type === "correct") ? 700 : 220;
+        gain.gain.value = 0.08;
+
+        osc.start();
+        setTimeout(() => osc.stop(), 150);
+      } catch (e) {
+        // If sound fails, ignore silently
+      }
+    }
+
+    // ---------------- THEME ----------------
+    function applyTheme(theme) {
+      if (theme === "dark") {
+        document.body.classList.add("dark");
+        darkToggle.textContent = "☀️ Light";
+      } else {
+        document.body.classList.remove("dark");
+        darkToggle.textContent = "🌙 Dark";
+      }
+    }
+
+    darkToggle.addEventListener("click", function () {
+      let current = localStorage.getItem("theme") || "light";
+      let next = current === "light" ? "dark" : "light";
+      localStorage.setItem("theme", next);
+      applyTheme(next);
+    });
+
+    // ---------------- AUTO LOAD ----------------
+    window.onload = function () {
+      let savedTheme = localStorage.getItem("theme") || "light";
+      applyTheme(savedTheme);
+
+      let savedName = localStorage.getItem("studentName");
+      let savedClass = localStorage.getItem("studentClass");
+
+      if (savedName && savedClass) {
+        loggedInName = savedName;
+        loggedInClass = savedClass;
+        openGame();
+      }
+    };
+
+    // ---------------- LOGIN ----------------
+    loginBtn.addEventListener("click", function () {
+      let name = studentName.value.trim();
+      let cls = studentClass.value;
+
+      if (name === "") {
+        loginMsg.style.color = "#ef4444";
+        loginMsg.textContent = "Please enter your name!";
+        return;
+      }
+
+      if (cls === "") {
+        loginMsg.style.color = "#ef4444";
+        loginMsg.textContent = "Please select your class!";
+        return;
+      }
+
+      loggedInName = name;
+      loggedInClass = cls;
+
+      localStorage.setItem("studentName", loggedInName);
+      localStorage.setItem("studentClass", loggedInClass);
+
+      openGame();
+    });
+
+    function openGame() {
+      loginBox.classList.add("hide");
+      gameBox.classList.remove("hide");
+
+      welcomeText.textContent = `Welcome, ${loggedInName} (Class ${loggedInClass})`;
+
+      bestScore = Number(localStorage.getItem("bestScore_" + loggedInName + "_" + loggedInClass)) || 0;
+      bestScoreEl.textContent = bestScore;
+
+      setMode("practice");
+      updateStatsUI();
+    }
+
+    logoutBtn.addEventListener("click", function () {
+      localStorage.removeItem("studentName");
+      localStorage.removeItem("studentClass");
+
+      loggedInName = "";
+      loggedInClass = "";
+
+      gameBox.classList.add("hide");
+      loginBox.classList.remove("hide");
+
+      studentName.value = "";
+      studentClass.value = "";
+      loginMsg.textContent = "";
+
+      resetAll();
+    });
+
+    // ---------------- TIMER ----------------
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 12;
+      timerEl.textContent = timeLeft + "s";
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft + "s";
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          messageEl.style.color = "#ef4444";
+          messageEl.textContent = "Time Up! Click Next Question.";
+        }
+      }, 1000);
+    }
+
+    // ---------------- HELPERS ----------------
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function gcd(a, b) {
+      while (b !== 0) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return Math.abs(a);
+    }
+
+    function lcm(a, b) {
+      return Math.abs(a * b) / gcd(a, b);
+    }
+
+    function calcAccuracy() {
+      if (totalQ === 0) return 0;
+      return Math.round((correctCount / totalQ) * 100);
+    }
+
+    function updateProgressUI() {
+      if (currentMode === "challenge") {
+        let percent = (totalQ / challengeLimit) * 100;
+        progressBar.style.width = percent + "%";
+        progressText.textContent = `Challenge progress: ${totalQ}/${challengeLimit}`;
+      } else {
+        progressBar.style.width = "0%";
+        progressText.textContent = "Challenge progress: 0/10";
+      }
+    }
+
+    function updateStatsUI() {
+      scoreEl.textContent = score;
+      totalQEl.textContent = totalQ;
+      correctCountEl.textContent = correctCount;
+      wrongCountEl.textContent = wrongCount;
+      accuracyEl.textContent = calcAccuracy() + "%";
+      bestScoreEl.textContent = bestScore;
+
+      modeTextEl.textContent = currentMode === "practice"
+        ? "Practice"
+        : `Challenge (${challengeLimit}Q)`;
+
+      updateProgressUI();
+    }
+
+    function saveBestScoreIfNeeded() {
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore_" + loggedInName + "_" + loggedInClass, bestScore);
+      }
+    }
+
+    // ---------------- MODES ----------------
+    function setMode(mode) {
+      currentMode = mode;
+      resultBox.classList.add("hide");
+
+      score = 0;
+      totalQ = 0;
+      correctCount = 0;
+      wrongCount = 0;
+
+      messageEl.textContent = "";
+      questionEl.textContent = 'Click "Next Question"';
+      answerInput.value = "";
+      clearInterval(timerInterval);
+      timerEl.textContent = "12s";
+
+      updateStatsUI();
+    }
+
+    practiceModeBtn.addEventListener("click", () => setMode("practice"));
+    challengeModeBtn.addEventListener("click", () => setMode("challenge"));
+
+    // ---------------- QUESTIONS ----------------
+    function generateQuestion() {
+      if (currentMode === "challenge" && totalQ >= challengeLimit) {
+        showChallengeResult();
+        return;
+      }
+
+      let cls = Number(loggedInClass);
+      let types = [];
+
+      if (cls <= 6) {
+        types = ["add", "sub", "mul", "table", "missing"];
+      } else if (cls <= 8) {
+        types = ["add", "sub", "mul", "div", "square", "percent", "missing"];
+      } else {
+        types = ["add", "sub", "mul", "div", "square", "cube", "percent", "lcm", "hcf", "missing"];
+      }
+
+      let type = types[rand(0, types.length - 1)];
+
+      let q = "";
+      let ans = 0;
+
+      if (type === "add") {
+        let a = rand(10, cls * 20);
+        let b = rand(5, cls * 15);
+        q = `${a} + ${b} = ?`;
+        ans = a + b;
+      }
+
+      if (type === "sub") {
+        let a = rand(20, cls * 25);
+        let b = rand(5, cls * 15);
+        if (b > a) [a, b] = [b, a];
+        q = `${a} - ${b} = ?`;
+        ans = a - b;
+      }
+
+      if (type === "mul") {
+        let a = rand(2, cls + 4);
+        let b = rand(2, cls + 6);
+        q = `${a} × ${b} = ?`;
+        ans = a * b;
+      }
+
+      if (type === "div") {
+        let b = rand(2, cls + 6);
+        let ansTemp = rand(2, cls + 5);
+        let a = b * ansTemp;
+        q = `${a} ÷ ${b} = ?`;
+        ans = ansTemp;
+      }
+
+      if (type === "square") {
+        let a = rand(2, cls + 6);
+        q = `${a}² = ?`;
+        ans = a * a;
+      }
+
+      if (type === "cube") {
+        let a = rand(2, 6);
+        q = `${a}³ = ?`;
+        ans = a * a * a;
+      }
+
+      if (type === "table") {
+        let a = rand(2, 12);
+        let b = rand(2, 12);
+        q = `${a} × ? = ${a * b}`;
+        ans = b;
+      }
+
+      if (type === "percent") {
+        let percent = [10, 20, 25, 50][rand(0, 3)];
+        let num = rand(20, 200);
+        q = `${percent}% of ${num} = ?`;
+        ans = (percent / 100) * num;
+      }
+
+      if (type === "lcm") {
+        let a = rand(2, 15);
+        let b = rand(2, 15);
+        q = `LCM of ${a} and ${b} = ?`;
+        ans = lcm(a, b);
+      }
+
+      if (type === "hcf") {
+        let a = rand(10, 60);
+        let b = rand(10, 60);
+        q = `HCF of ${a} and ${b} = ?`;
+        ans = gcd(a, b);
+      }
+
+      if (type === "missing") {
+        let a = rand(10, 60);
+        let b = rand(10, 60);
+        let result = a + b;
+        q = `? + ${a} = ${result}`;
+        ans = b;
+      }
+
+      questionEl.textContent = q;
+      correctAnswer = ans;
+
+      messageEl.textContent = "";
+      messageEl.style.color = "var(--text)";
+      answerInput.value = "";
+      answerInput.focus();
+
+      startTimer();
+    }
+
+    // ---------------- SUBMIT ----------------
+    function submitAnswer() {
+      if (answerInput.value === "") {
+        messageEl.style.color = "var(--red)";
+        messageEl.textContent = "Please enter an answer!";
+        return;
+      }
+
+      if (timeLeft <= 0) {
+        messageEl.style.color = "var(--red)";
+        messageEl.textContent = "Time over! Click Next Question.";
+        return;
+      }
+
+      let userAns = Number(answerInput.value);
+      totalQ++;
+
+      if (userAns === correctAnswer) {
+        score++;
+        correctCount++;
+        messageEl.style.color = "var(--green)";
+        messageEl.textContent = "Correct! ✅";
+        beep("correct");
+      } else {
+        wrongCount++;
+        messageEl.style.color = "var(--red)";
+        messageEl.textContent = "Wrong ❌ Correct: " + correctAnswer;
+        beep("wrong");
+      }
+
+      saveBestScoreIfNeeded();
+      updateStatsUI();
+
+      if (currentMode === "challenge" && totalQ >= challengeLimit) {
+        showChallengeResult();
+      }
+    }
+
+    // ---------------- RESULT ----------------
+    function showChallengeResult() {
+      clearInterval(timerInterval);
+      timerEl.textContent = "0s";
+
+      resultBox.classList.remove("hide");
+
+      resName.textContent = loggedInName;
+      resClass.textContent = "Class " + loggedInClass;
+      resScore.textContent = score;
+      resAccuracy.textContent = calcAccuracy() + "%";
+      resCorrect.textContent = correctCount;
+      resWrong.textContent = wrongCount;
+      resTotal.textContent = totalQ;
+
+      messageEl.style.color = "var(--blue)";
+      messageEl.textContent = "Challenge Completed! 🎉";
+    }
+
+    // ---------------- BUTTONS ----------------
+    document.getElementById("submitBtn").addEventListener("click", submitAnswer);
+    document.getElementById("nextBtn").addEventListener("click", generateQuestion);
+
+    answerInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") submitAnswer();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+    function resetAll() {
+      score = 0;
+      totalQ = 0;
+      correctCount = 0;
+      wrongCount = 0;
+
+      messageEl.textContent = "";
+      questionEl.textContent = 'Click "Next Question"';
+      answerInput.value = "";
+      clearInterval(timerInterval);
+      timerEl.textContent = "12s";
+
+      resultBox.classList.add("hide");
+      updateStatsUI();
+    }
+  </script>
+</body>
+</html>
